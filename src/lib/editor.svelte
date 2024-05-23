@@ -39,6 +39,21 @@
             theme: 'vs-dark'
         });
         
+        editor.onDidChangeModelContent(async () => {
+            let editorContent = editor.getValue();
+            await sendToBackend(editorContent.split("\n"));
+        });
+
+        async function sendToBackend(monacoData: string[]) {
+            await fetch("http://localhost:5173/api/save", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'appliction/json'
+                },
+                body: JSON.stringify({content: monacoData})
+            })
+        }
+
         return (): void => {
             editor.dispose();
         }
@@ -53,6 +68,6 @@
 <style>
     #editor {
         height: 100dvh;
-        width: 100dvw;
+        width: 50dvw;
     }
 </style>
